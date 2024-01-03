@@ -12,6 +12,8 @@ This codebase is designed to interact with OpenAI's GPT-3.5 model to generate an
 1. Clone the repository to your local machine.
 2. Install the required Python libraries 
 3. Obtain API keys for OpenAI and OneCompiler and set them in `love.py`:
+- OPENAIKEY = 'your-openai-api-key'
+- RapidAPI_1COMPKEY = 'your-onecompiler-api-key'
 
 ## Usage
 To use the codebase, simply run `main.py`
