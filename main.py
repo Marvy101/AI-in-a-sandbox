@@ -31,7 +31,7 @@ def run_code(code):
 
     # Check if the response is successful
     if response.status_code == 200:
-        print("Answer from code tool: "+str(response.json()))
+        #print("Answer from code tool: "+str(response.json())) #debugging
         return response.json()
     else:
         return f"Error: {response.status_code}"
@@ -82,7 +82,7 @@ def run_conversation():
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
-            print("What AI is sending to tool "+str(function_args.get("code")))
+            #print("What AI is sending to tool "+str(function_args.get("code"))) #debugging
             function_response = function_to_call(
                 code=function_args.get("code"),
             )
