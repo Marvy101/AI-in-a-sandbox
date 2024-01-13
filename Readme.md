@@ -22,5 +22,6 @@ This will start a conversation with the AI, generate a complex question, solve i
 
 ## Note
 Do not upload `love.py` with your API keys to any public repositories for security reasons.
+Works way better with GPT4 than GPT3.5
 
 Enjoy!
