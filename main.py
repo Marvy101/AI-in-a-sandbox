@@ -89,9 +89,6 @@ def run_conversation(user_question):
         print(response_message)
 
         #print("2") # Debugging
-        if not hasattr(response_message, 'tool_calls'):
-            print("No tool_calls in response message")
-            return response.choices[0].message.content
 
         #print("3") # Debugging
         tool_calls = response_message.tool_calls
@@ -133,7 +130,7 @@ def run_conversation(user_question):
                 print("Code tool function response: \n", str(function_response)) # Debugging
 
             second_response = client.chat.completions.create(
-                model="gpt-3.5-turbo-1106",
+                model="gpt-4-1106-preview",
                 messages=[
                         {"role": "system", "content": """
                                 You are Galileo, an AI to help students solve their questions both technical and non-technical. Your goal is to help students get correct answers and explain to them step by step so they can learn it.
