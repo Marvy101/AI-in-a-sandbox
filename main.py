@@ -43,7 +43,7 @@ def run_conversation(user_question):
     try:
         messages = [
             {"role": "system", "content":"""
-            When answering computational questions, write the code using the 'run code' tool. YOU MUST NOT USE  the sympy library INSTEAD USE  OTHER MATHS LIBRIARIES. 
+            When answering computational questions, write the code using the 'run code' tool. Ensure that the code includes print statements to display the results. Do not use the sympy library; instead, utilize other mathematics libraries available in Python.
 
                 Example: 
                 Question: Calculate the factorial of 50.
@@ -74,7 +74,7 @@ def run_conversation(user_question):
             }
         ]
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",
+            model="gpt-4-1106-preview",
             messages=messages,
             tools=tools,
             tool_choice="auto",
@@ -91,13 +91,12 @@ def run_conversation(user_question):
         #print("2") # Debugging
         if not hasattr(response_message, 'tool_calls'):
             print("No tool_calls in response message")
-            
-            return None
+            return response.choices[0].message.content
 
         #print("3") # Debugging
         tool_calls = response_message.tool_calls
-        all_the_codes = []
         function_responses = []
+        all_the_codes = []
         if tool_calls:
             available_functions = {
                 "run_code": run_code,
@@ -116,32 +115,10 @@ def run_conversation(user_question):
                 #print(str(tool_call)) # Debugging
                 function_args = json.loads(tool_call.function.arguments)
                 print("What AI is sending to tool: \n" + str(function_args.get("code"))) # Debugging
-
-                # Let's make sure the code is printing something
-                code = function_args.get("code").rstrip() #remove trailing lastline
-                lines = code.splitlines()
-                last_line = lines[-1]
-
-                
-                # Check if there is only one line and it contains an assignment
-                if (len(lines) == 1 and "=" in last_line and not last_line.strip().startswith("print")) or len(lines)>1 and "=" in last_line and not last_line.strip().startswith("print"):
-                    # Extract everything before the '=' sign
-                    variable_name = last_line.split('=')[0].strip()
-                    # Append a print statement for the variable
-                    code += f"\nprint({variable_name})\n"
-                    lines = code.splitlines()
-                    last_line = lines[-1]
-
-                # Check if the last line is already a print statement
-                if not last_line.strip().startswith("print"):
-                    # For multi-line code, if the last line is not a print statement, append a print statement
-                    code += f"\nprint({last_line})\n"
-
-                print("Edited code we're sending to code execution api: \n"+code) #debugging
-                all_the_codes.append(code)
+                all_the_codes.append(function_args.get("code"))
 
                 function_response = function_to_call(
-                    code=code
+                    code=function_args.get("code")
                 )
                 function_responses.append(function_response)
 
@@ -179,11 +156,11 @@ def run_conversation(user_question):
             return second_response.choices[0].message.content
         else:
             print("No tool calls to process")
-            return None
+            return response.choices[0].message.content
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
 
 #print(run_code("import math\nresult = math.factorial(50)\nprint(result)"))
 question = input("What is your math's question: ")
-print(run_conversation(question + "A is 0, B is 1, C is 2, D is 3. When returning the answer use the numbers instead of the options. Thank you."))
+print(run_conversation(question ))
